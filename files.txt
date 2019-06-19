@@ -1,0 +1,31 @@
+;;Files that comprise SOLVEPOL IDL
+
+
+%The procedures, files and functions used by SOLVEPOL are listed bellow. There are procedures and/or routines that are part of the IDL Astronomy Users Library (http://idlastro.gsfc.nasa.gov) that are not listed below, but that are used by SOLVEPOL. It is recommend that you have the IDL Astronomy and Coyote libraries in your computer.
+
+
+%SOLVEPOLTREE=================
+%SOLVEPOL.pro
+	%%reduction.pro
+	%%dither.pro
+	%%fakesky.pro
+	%%astrometrylist.pro
+	%%
+		%%%magnit.pro
+			%%%%zeropoint.pro
+		%%%wcstest.pro
+		%%%fintab.pro
+		%%%plotvec.pro
+			%%%%SUBCELL.pro (extra)
+			%%%%plotimage.pro (extra)
+			%%%%polarimetrystandardstars.dat
+		%%%stringad.pro (extra)
+	%%polpair.pro
+		%%%findsep.pro
+		%%%vignetting.pro
+		%%%pair.pro
+		%%%runphot.pro
+		%%%calcpol.pro
+			%%%%graf.pro
+				%%%%%gfunct.pro
+
