@@ -47,7 +47,8 @@ pro findstdstar,pairfile,wcsimage,stdstars,RA,DEC
 ; REVISON HISTORY:
 ;       
 ;-  	
-
+  subdir='solvepol'             ;borrame, es solo para test
+  ;name1='hd110cv0001' ;borrame, es solo para test
 ;;===reading stars from .pair file to find standard star===
   readcol,pairfile,F='I,F,F,D,D,D',starnu,xvalp,yvalp,fluxesp,sharpnp,roundnp,COUNT=ngoodpair,NLINES=nlinespair,/silent
   readcol,pairfile,F='A,I',Pair,Pairno,/silent
@@ -89,6 +90,12 @@ pro findstdstar,pairfile,wcsimage,stdstars,RA,DEC
 
   starfind=0
 
+
+  close,2
+  openw,2,subdir+'/'+'StandardStar_fintab.out' ;To print the standard star in the final table 
+
+
+  
   for i = 0,ngoodpair/2-1 do begin
      for j=0,ngoodstd-1 do begin
 
@@ -113,6 +120,20 @@ pro findstdstar,pairfile,wcsimage,stdstars,RA,DEC
 
            print,''
 
+;==Printing the standard star in the final table==
+           printf,2,' --- ---'
+           printf,2,'Standard star on the field: ',name[j]
+           printf,2,'RA & DEC:',Rap[i],Decp[i]
+
+           printf,2,pair,pairno
+           printf,2,'   STAR       X       Y'
+           printf,2,idpo[i], xvalpo[i],yvalpo[i],FORMAT='(I5," ",2(F7.2," "))'
+           printf,2,idpe[i], xvalpe[i],yvalpe[i],FORMAT='(I5," ",2(F7.2," "))'
+
+           printf,2,''
+;------
+         
+
            pstdl=pstd[j]
            dpstdl=dpstd[j]
            thetastdl=thetastd[j]
@@ -125,8 +146,11 @@ pro findstdstar,pairfile,wcsimage,stdstars,RA,DEC
      endfor
   endfor
 
+
   if starfind eq 0 then begin
      print,'There is not a standard star on the FOV.' 
+     printf,2,'There is not a standard star on the FOV.' ;To print the standard star in the final table
+     close,2
      return
   endif
 
@@ -169,16 +193,29 @@ pro findstdstar,pairfile,wcsimage,stdstars,RA,DEC
   z=float(zs[2:*])
   dz=float(dzs[2:*])
 
+;==Printing the standard star in the final table==
+  printf,2,'Best Aperture (aperture with lowest psigma):',fix(tmpapper)
+
+  printf,2,tmpstr[k+3  +6*fix(tmpapper)-6+3]
+  printf,2,tmpstr[k+3  +6*fix(tmpapper)-6+4]
+;---
+  
 ;===printing modulation
   print,tmpstr[k+3  +6*fix(tmpapper)-6+5]
   print,tmpstr[k+3  +6*fix(tmpapper)-6+6]
   print,''
-
+  
+;==Printing the standard star in the final table==
+  printf,2,tmpstr[k+3  +6*fix(tmpapper)-6+5]
+  printf,2,tmpstr[k+3  +6*fix(tmpapper)-6+6]
+  printf,2,''
+;---
 
 ;==calculating Chisqrt
   chisqrt=graf(z,dz,/plotm)
   print,'Reduced Chi-square=',chisqrt
-
+  printf,2,'Reduced Chi-square=',chisqrt ;To print the standard star in the final table
+  
 ;===printing polarimetric properties
   strpolprop=STRSPLIT(tmpstr[k+3  +6*fix(tmpapper)-6+6],/EXTRACT)
   p=float(strpolprop[4])
@@ -189,10 +226,16 @@ pro findstdstar,pairfile,wcsimage,stdstars,RA,DEC
   print,'' 
   print,'Pol_measured & Theta_measured =',p*100.,'+/-',dp*100.,'%, ', theta,'+/-',dtheta,' degrees', FORMAT='(4(A,F7.3),A)'
   print,'Pol_literature & Theta_literature = ',pstdl,'+/-',dpstdl,'%, ',thetastdl,' degrees '+Refstdl,FORMAT='(A,F7.3,A,F7.3,A,F7.3,A)' 
-
+;==Printing the standard star in the final table==
+  printf,2,'' 
+  printf,2,'Pol_measured & Theta_measured =',p*100.,'+/-',dp*100.,'%, ', theta,'+/-',dtheta,' degrees', FORMAT='(4(A,F7.3),A)'
+  printf,2,'Pol_literature & Theta_literature = ',pstdl,'+/-',dpstdl,'%, ',thetastdl,' degrees '+Refstdl,FORMAT='(A,F7.3,A,F7.3,A,F7.3,A)' 
+;---
+  
   ;==print theta_literature - theta_measured
   deltatheta =  thetastdl -  theta 
   print,'Deltatheta (degrees) = theta_literature - theta_measured = ',deltatheta 
+  printf,2,'Deltatheta (degrees) = theta_literature - theta_measured = ',deltatheta ;To print the standard star in the final table
 
 
   fintabtrue=0
@@ -206,18 +249,28 @@ pro findstdstar,pairfile,wcsimage,stdstars,RA,DEC
 
            fintabtrue=1
            print,'Standard star on the final catalogue: ',name[j]
-
+           printf,2,'Standard star on the final catalogue: ',name[j] ;To print the standard star in the final table
         endif 
      endfor
   endfor
 
-  if starfind eq 0 and fintabtrue eq 0 then print,'There is not a standard star on the FOV.'
+  if starfind eq 0 and fintabtrue eq 0 then begin
+     print,'There is not a standard star on the FOV.'
+     printf,2,'There is not a standard star on the FOV.';To print the standard star in the final table
+  endif
+  
+  if starfind eq 1 and fintabtrue eq 0 then begin
+     print,'The standard star is not in the final catalogue.'
+     printf,2,'The standard star is not in the final catalogue.' ;To print the standard star in the final table
+  endif
 
-  if starfind eq 1 and fintabtrue eq 0 then print,'The standard star is not in the final catalogue.'
-
-  if starfind eq 1 and fintabtrue eq 1 then print,'The standard star is on the FOV and in the final catalogue.'
-
+  if starfind eq 1 and fintabtrue eq 1 then begin
+     print,'The standard star is on the FOV and in the final catalogue.'
+     printf,2,'The standard star is on the FOV and in the final catalogue.';To print the standard star in the final table
+  endif
 
   print,' --- ---'
+  printf,2,' --- ---'
+  close,2 ;closing the standard star final table
 
 end
