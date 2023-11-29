@@ -21,6 +21,7 @@
 			%%%%polarimetrystandardstars.dat
 		%%%stringad.pro (extra)
 	%%polpair.pro
+		%%%calcufwhm.pro
 		%%%findsep.pro
 		%%%vignetting.pro
 		%%%pair.pro
@@ -28,4 +29,8 @@
 		%%%calcpol.pro
 			%%%%graf.pro
 				%%%%%gfunct.pro
+	%%findstdstar.pro
+
+GITHUB:
+https://github.com/edgarandre/SOLVEPOL#solvepol
 
